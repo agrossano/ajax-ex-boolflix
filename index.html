@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="css/style.css" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div class="container">
+      <input class"search" type="text" />
+      <button>Cerca</button>
+    </div>
+    <div class="movie-box"></div>
+    <script id="movie-template" type="text/x-handlebars-template">
+      <div class="movie">
+        <div>
+          <h3>
+            Titolo: {{title}}
+          </h3>
+        </div>
+        <div>
+          <h3>
+            Titolo originale: {{originalTitle}}
+          </h3>
+        </div>
+        <div>
+          <h3>
+            Lingua: {{language}}
+          </h3>
+        </div>
+        <div>
+          <h3>
+            Voto: {{vote}}
+          </h3>
+        </div>
+      </div>
+    </script>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/handlebars@latest/dist/handlebars.js"></script>
+    <script type="text/javascript" src="js/main.js"></script>
+  </body>
+</html>
