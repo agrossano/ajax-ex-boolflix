@@ -93,7 +93,7 @@ $(document).ready(function () {
 
   //Funzione stelle che riceve il voto in decimali dalla chiamata della funzione
   function vote(rating) {
-    voto = Math.ceil(rating / 2); // il voto in quinti corrisponde al voto passato alla funzione in decimali diviso due
+    voto = Math.ceil(rating / 2); // il voto in quinti corrisponde al voto passato alla funzione in decimali diviso due e arrotondato per eccesso all’unità successiva
     var totStar = ""; // inizializzo variabile contenente stringa tag stelle HTML
 
     //se l'iterazione attuale è uguale o minore al voto, aggiungi una stella piena al totale delle stelle
