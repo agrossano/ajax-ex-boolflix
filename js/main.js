@@ -4,6 +4,7 @@ $(document).ready(function () {
   var source = $("#movie-template").html();
   //compilo template handlebars
   var template = Handlebars.compile(source);
+  var movieList, tvList;
 
   $("button").click(function () {
     $(".movie__box").html("")
@@ -45,11 +46,12 @@ $(document).ready(function () {
 
   //FUNZIONI
 
+  // funzione che riceve rispettivamente lista oggetti di film e serie tv dalle due chiamate api
   function appendObj(objList) {
-
     for (var i = 0; i < objList.length; i++) {
       var title, originalName;
       currentObj = objList[i];
+      // adegua i nomi dei valori delle chiavi a seconda se viene ricevuta una lista di "movie" o di "tv"
       if (objList === movieList) {
         title = "title";
         originalName = "original_title"
@@ -58,46 +60,54 @@ $(document).ready(function () {
         originalName = "original_name"
       };
 
+      //lista di chiave-valore da ricavare dall'oggetto
       var context = {
         title: currentObj[title],
         originalTitle: currentObj[originalName],
         language: flags(currentObj.original_language),
         vote: vote(currentObj.vote_average)
       };
-      //stampo i film a schermo
+
+      //stampo il film/serie tv dell'iterazione attuale
       var html = template(context);
       $(".movie__box").append(html)
     };
   };
 
 
+  // Funzione gestione lingua che riceve il codice lingua dalla chiamata della funzione 
   function flags(lang) {
+    // salvo lista lingua gestite
     var flagsList = [
       'en',
       'it'
     ]
+    //se la lista delle lingue disponibili include il codice lingua ricevuto dalla chiamata, ritorna stringa html con lingua parametrizzata nella stringa html
     if (flagsList.includes(lang)) {
       return "<img class='language' src='img/" + lang + ".png'";
     } else {
-      return lang;
+      return lang; // altrimenti ritorna semplicemente il codice lingua
     };
   };
 
 
+  //Funzione stelle che riceve il voto in decimali dalla chiamata della funzione
   function vote(rating) {
-    var totStar = "";
-    voto = Math.ceil(rating / 2);
+    voto = Math.ceil(rating / 2); // il voto in quinti corrisponde al voto passato alla funzione in decimali diviso due
+    var totStar = ""; // inizializzo variabile contenente stringa tag stelle HTML
+
+    //se l'iterazione attuale è uguale o minore al voto, aggiungi una stella piena al totale delle stelle
     for (var i = 0; i < 5; i++) {
       if (i <= voto) {
         totStar += "<i class='fas fa-star'></i>";
+        //altrimenti aggiungi una stella vuota al totale stelle
       } else {
         totStar += "<i class='far fa-star'></i>";
       };
     };
+    //ritorna totale stelle
     return totStar;
 
   };
-
-
 
 });
