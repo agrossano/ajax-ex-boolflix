@@ -113,9 +113,6 @@ $(document).ready(function () {
 
   function coverUrl(posterPath) {
     fullUrl = '<img src="https://image.tmdb.org/t/p/w185/' + posterPath + '"alt="" />'
-
-
-    "https://image.tmdb.org/t/p/w185" + posterPath
     if (posterPath !== null) {
       return fullUrl
     }
