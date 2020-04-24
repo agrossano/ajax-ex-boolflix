@@ -40,6 +40,7 @@ $(document).ready(function () {
       }
     });
 
+
   });
 
 
@@ -60,18 +61,31 @@ $(document).ready(function () {
         originalName = "original_name"
       };
 
+
+
+
       //lista di chiave-valore da ricavare dall'oggetto
       var context = {
         title: currentObj[title],
         originalTitle: currentObj[originalName],
         language: flags(currentObj.original_language),
         vote: vote(currentObj.vote_average),
-        cover: coverUrl(currentObj.poster_path)
+        cover: coverUrl(currentObj.poster_path),
+        overview: currentObj.overview
       };
+
 
       //stampo il film/serie tv dell'iterazione attuale
       var html = template(context);
       $(".movie__box").append(html)
+
+      //rimuovi titolo originale se uguale al titolo
+      if (currentObj[title] === currentObj[originalName]) {
+        $('.originale:contains(' + currentObj[originalName] + ')').remove();
+      }
+
+
+
     };
   };
 
@@ -112,11 +126,17 @@ $(document).ready(function () {
   };
 
   function coverUrl(posterPath) {
-    fullUrl = '<img src="https://image.tmdb.org/t/p/w185/' + posterPath + '"alt="" />'
+    var fullUrl = '<img src="https://image.tmdb.org/t/p/w342/' + posterPath + '"alt="" />'
     if (posterPath !== null) {
-      return fullUrl
+      return fullUrl;
     }
-    return "No img"
+    return '<img src="img/no_poster.png" alt="">';
   }
+
+
+
+
+
+
 
 });

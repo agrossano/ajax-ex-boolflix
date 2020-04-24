@@ -1,14 +1,41 @@
 * {
   padding: 0;
   margin: 0;
+
   box-sizing: border-box;
+}
+
+body {
+  overflow-x: hidden;
 }
 
 .container {
   width: 100vw;
 }
 
+.header {
+  display: flex;
+  justify-content: space-between;
+  position: fixed;
+  height: 70px;
+  width: 100%;
+  background-color: black;
+  z-index: 1;
+}
+
+.logo {
+  width: 100px;
+  color: red;
+  padding: 20px;
+}
+
+.search-box {
+  display: flex;
+  padding: 20px;
+}
+
 .movie__box {
+  padding-top: 70px;
   display: flex;
   flex-wrap: wrap;
   width: 100vw;
@@ -17,8 +44,31 @@
 .movie {
   display: flex;
   flex-direction: column;
-  border: 1px solid black;
-  width: 20vw;
+  width: 350px;
+  padding: 50px;
+}
+
+.cover {
+  width: 330px;
+  z-index: 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.cover img {
+  width: 100%;
+}
+.cover img:hover {
+  opacity: 0;
+}
+
+.cover:hover {
+}
+
+.info {
+  width: 330px;
+  position: absolute;
+  z-index: -1;
 }
 
 .language {
