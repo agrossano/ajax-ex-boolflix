@@ -71,7 +71,7 @@ $(document).ready(function () {
         language: flags(currentObj.original_language),
         vote: vote(currentObj.vote_average),
         cover: coverUrl(currentObj.poster_path),
-        overview: currentObj.overview
+        overview: truncate(currentObj.overview)
       };
 
 
@@ -134,7 +134,12 @@ $(document).ready(function () {
   }
 
 
-
+  function truncate(input) {
+    if (input.length > 200)
+      return input.substring(0, 200) + '...';
+    else
+      return input;
+  };
 
 
 

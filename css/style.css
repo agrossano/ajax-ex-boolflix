@@ -6,69 +6,121 @@
 }
 
 body {
-  overflow-x: hidden;
+  font-family: "Lato", sans-serif;
 }
 
 .container {
   width: 100vw;
+  max-width: 100%;
+  background-color: #1f1f1f;
+  height: 100vh;
 }
 
 .header {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   position: fixed;
-  height: 70px;
-  width: 100%;
-  background-color: black;
-  z-index: 1;
+  height: 93px;
+  width: 100vw;
+  background-color: #1f1f1f;
+  z-index: 2;
 }
 
 .logo {
   width: 100px;
-  color: red;
-  padding: 20px;
+  color: #86b393;
+  padding: 20px 0 20px 64px;
+  font-size: 25px;
 }
 
 .search-box {
-  display: flex;
-  padding: 20px;
+  padding: 83px;
+}
+
+input {
+  color: #86b393;
+  width: 250px;
+  cursor: pointer;
+  border: 1px solid rgba(129, 151, 164, 0.5);
+  background-color: rgba(15, 23, 30, 0.2);
+  font-size: 17px;
+  line-height: 24px;
+  padding: 7px 0;
+  box-shadow: none;
+  margin: 0;
+  height: auto;
+}
+
+.cerca {
+  background-color: #86b393;
+  border: 0;
+  color: #282626;
+  font-size: 17px;
+  padding: 10px 0;
+  width: 70px;
 }
 
 .movie__box {
-  padding-top: 70px;
+  display: flex;
+  justify-content: center;
+  background-color: #282626;
+  padding-top: 93px;
   display: flex;
   flex-wrap: wrap;
   width: 100vw;
+  max-width: 100%;
 }
 
 .movie {
   display: flex;
   flex-direction: column;
-  width: 350px;
-  padding: 50px;
+  justify-content: start;
+  width: calc(20vw - 60px);
+  z-index: 1;
+  height: 100%;
+  margin: 20px;
+  border-radius: 10px;
+  box-shadow: 0 19px 38px rgba(0, 0, 0, 0.3), 0 15px 12px rgba(0, 0, 0, 0.22);
+  transition: 0.2s ease-in-out;
+}
+
+.movie:hover {
+  transform: scale(1.03);
 }
 
 .cover {
-  width: 330px;
-  z-index: 0;
+  width: 100%;
+  z-index: 1;
   position: relative;
   overflow: hidden;
+  border-radius: 10px;
+  transition: 0.2s ease-in-out;
+}
+
+.cover:hover {
+  opacity: 0;
+  z-index: 1;
 }
 
 .cover img {
   width: 100%;
 }
-.cover img:hover {
-  opacity: 0;
-}
-
-.cover:hover {
-}
 
 .info {
+  color: #f2fff6;
   width: 330px;
   position: absolute;
-  z-index: -1;
+  padding: 50px 18px;
+  z-index: 0;
+}
+
+.titolo {
+  color: #f2fff6;
+}
+
+.voto svg {
+  color: #86b393;
 }
 
 .language {
