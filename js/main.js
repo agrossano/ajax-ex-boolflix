@@ -106,15 +106,10 @@ $(document).ready(function () {
         api_key: apyKey,
       },
       success: function (data) {
-        var actorsArr = [];
 
         for (var i = 0; i < 5; i++) {
-
-          actorsArr.push(data.cast[i].name);
-
           $("#" + idMovie).find('.attori').append(data.cast[i].name + " ")
         }
-        console.log(actorsArr)
 
       }
     });
