@@ -22,7 +22,7 @@
     </div>
 
     <script id="movie-template" type="text/x-handlebars-template">
-      <div class="movie">
+      <div class="movie" id="{{idmovie}}">
         <div class="cover">
           {{{cover}}}
         </div>
@@ -50,6 +50,11 @@
           <div>
             <h3 class="overview">
               Overview: {{{overview}}}
+            </h3>
+          </div>
+          <div>
+            <h3 class="attori">
+              Attori: {{{actors}}}
             </h3>
           </div>
         </div>

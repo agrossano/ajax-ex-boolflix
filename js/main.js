@@ -5,55 +5,58 @@ $(document).ready(function () {
   //compilo template handlebars
   var template = Handlebars.compile(source);
   var movieList, tvList;
+  var url = "https://api.themoviedb.org/3/search/movie"
+  //salvo stringa campo input
+  var apyKey = "5fad9047b6dddb7c700edc20ddb983a9"
+
 
   $("button").click(function () {
-    $(".movie__box").html("")
-    // pulisco div film
-    var searchInput = $("input").val(); //salvo stringa campo input
-    $.ajax({
-      url: "https://api.themoviedb.org/3/search/movie",
-      method: "GET",
-      data: {
-        api_key: "5fad9047b6dddb7c700edc20ddb983a9",
-        query: searchInput // query ricercata come output da mandare all'api
-      },
-      success: function (data) {
-        movieList = data.results; // array ottenuto dalla chiamata all'api
-        appendObj(movieList)
-      },
-      error: function (error) {
-        alert("errore");
-      },
-
-    });
-
-    $.ajax({
-      url: "https://api.themoviedb.org/3/search/tv",
-      method: "GET",
-      data: {
-        api_key: "5fad9047b6dddb7c700edc20ddb983a9",
-        query: searchInput // query ricercata come output da mandare all'api
-      },
-      success: function (data) {
-        tvList = data.results; // array ottenuto dalla chiamata all'api
-        appendObj(tvList)
-      }
-    });
-
+    $(".movie__box").html("");
+    var query = $("input").val();
+    apiCall("https://api.themoviedb.org/3/search/movie", apyKey, query, "movies")
+    apiCall("https://api.themoviedb.org/3/search/tv", apyKey, query, "tv")
 
   });
 
 
 
+
+
+
+
+
+
   //FUNZIONI
 
+
+  function apiCall(url, apiKey, query, listType) {
+    $.ajax({
+      url: url,
+      method: "GET",
+      data: {
+        api_key: apiKey,
+        query: query // query ricercata come output da mandare all'api
+      },
+      success: function (data) {
+        objList = data.results; // array ottenuto dalla chiamata all'api
+        appendObj(objList, listType)
+      },
+      error: function (error) {
+
+        alert("errore");
+      },
+    });
+  }
+
+
+
   // funzione che riceve rispettivamente lista oggetti di film e serie tv dalle due chiamate api
-  function appendObj(objList) {
+  function appendObj(objList, listType) {
     for (var i = 0; i < objList.length; i++) {
       var title, originalName;
       currentObj = objList[i];
       // adegua i nomi dei valori delle chiavi a seconda se viene ricevuta una lista di "movie" o di "tv"
-      if (objList === movieList) {
+      if (listType === "movies") {
         title = "title";
         originalName = "original_title"
       } else {
@@ -71,13 +74,17 @@ $(document).ready(function () {
         language: flags(currentObj.original_language),
         vote: vote(currentObj.vote_average),
         cover: coverUrl(currentObj.poster_path),
-        overview: truncate(currentObj.overview)
+        overview: truncate(currentObj.overview),
+        actors: actors(currentObj.id),
+        idmovie: currentObj.id
       };
+
 
 
       //stampo il film/serie tv dell'iterazione attuale
       var html = template(context);
       $(".movie__box").append(html)
+
 
       //rimuovi titolo originale se uguale al titolo
       if (currentObj[title] === currentObj[originalName]) {
@@ -88,6 +95,30 @@ $(document).ready(function () {
 
     };
   };
+
+
+  function actors(idMovie) {
+
+    $.ajax({
+      type: "get",
+      url: "https://api.themoviedb.org/3/movie/" + idMovie + "/credits",
+      data: {
+        api_key: apyKey,
+      },
+      success: function (data) {
+        var actorsArr = [];
+
+        for (var i = 0; i < 5; i++) {
+
+          actorsArr.push(data.cast[i].name);
+
+          $("#" + idMovie).find('.attori').append(data.cast[i].name + " ")
+        }
+        console.log(actorsArr)
+
+      }
+    });
+  }
 
 
   // Funzione gestione lingua che riceve il codice lingua dalla chiamata della funzione 
@@ -125,6 +156,7 @@ $(document).ready(function () {
 
   };
 
+  //funzione che compone l'url del poster
   function coverUrl(posterPath) {
     var fullUrl = '<img src="https://image.tmdb.org/t/p/w342/' + posterPath + '"alt="" />'
     if (posterPath !== null) {
@@ -134,14 +166,11 @@ $(document).ready(function () {
   }
 
 
+  //funzione che tronca il testo della "overview"
   function truncate(input) {
     if (input.length > 200)
-      return input.substring(0, 200) + '...';
+      return input.substring(0, 200) + '...]';
     else
       return input;
   };
-
-
-
-
 });
