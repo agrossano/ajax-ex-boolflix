@@ -31,7 +31,8 @@ body {
   width: 100px;
   color: #86b393;
   padding: 20px 0 20px 64px;
-  font-size: 25px;
+  font-size: 30px;
+  cursor: pointer;
 }
 
 .search-box {
@@ -75,6 +76,7 @@ input {
   display: flex;
   flex-direction: column;
   justify-content: center;
+  position: relative;
   cursor: pointer;
   width: 330px;
   z-index: 1;
@@ -93,14 +95,13 @@ input {
 .cover {
   width: 100%;
   z-index: 1;
-  position: relative;
   overflow: hidden;
   border-radius: 10px;
   transition: 0.2s ease-in-out;
 }
 
 .cover:hover {
-  opacity: 0.05;
+  opacity: 0.07;
   z-index: 1;
 }
 
@@ -109,8 +110,15 @@ input {
 }
 
 .info {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background-color: #1c241f;
+  font-size: 14px;
   color: #f2fff6;
   width: 330px;
+  height: 100%;
+  top: 0;
   position: absolute;
   padding-left: 18px;
   padding-right: 18px;

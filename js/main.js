@@ -10,23 +10,50 @@ $(document).ready(function () {
   var apyKey = "5fad9047b6dddb7c700edc20ddb983a9"
 
 
-  $("button").click(function () {
-    $(".movie__box").html("");
-    var query = $("input").val();
-    apiCall("https://api.themoviedb.org/3/search/movie", apyKey, query, "movies")
-    apiCall("https://api.themoviedb.org/3/search/tv", apyKey, query, "tv")
 
+
+  $("button").click(movieSearch);
+
+
+  $("input").keypress(function (e) {
+    if (e.which == 13) {
+      movieSearch();
+    };
   });
 
 
 
-
-
-
-
-
+  var movieGenresList = loadGenres("https://api.themoviedb.org/3/genre/movie/list", apyKey, "movie");
+  var tvGenresList = loadGenres("https://api.themoviedb.org/3/genre/tv/list", apyKey, "tv");
 
   //FUNZIONI
+
+
+  function movieSearch() {
+    $(".movie__box").html("");
+    var query = $("input").val();
+    apiCall("https://api.themoviedb.org/3/search/movie", apyKey, query, "movies");
+    apiCall("https://api.themoviedb.org/3/search/tv", apyKey, query, "tv");
+  }
+
+
+  function loadGenres(urlGenre, apyKey, type) {
+    $.ajax({
+      type: "get",
+      url: urlGenre,
+      data: {
+        api_key: apyKey,
+      },
+      success: function (data) {
+        genere = data;
+        if (type === "movie") {
+          return movieGenresList = genere;
+        } else {
+          return tvGenresList = genere;
+        }
+      }
+    });
+  };
 
 
   function apiCall(url, apiKey, query, listType) {
@@ -42,30 +69,31 @@ $(document).ready(function () {
         appendObj(objList, listType)
       },
       error: function (error) {
-
         alert("errore");
       },
     });
-  }
+  };
 
 
 
   // funzione che riceve rispettivamente lista oggetti di film e serie tv dalle due chiamate api
   function appendObj(objList, listType) {
     for (var i = 0; i < objList.length; i++) {
+
       var title, originalName;
       currentObj = objList[i];
       // adegua i nomi dei valori delle chiavi a seconda se viene ricevuta una lista di "movie" o di "tv"
       if (listType === "movies") {
         title = "title";
         originalName = "original_title"
+        urlActors = "https://api.themoviedb.org/3/movie/"
       } else {
         title = "name"
         originalName = "original_name"
+        urlActors = "https://api.themoviedb.org/3/tv/"
       };
 
-
-
+      actors(currentObj.id, urlActors)
 
       //lista di chiave-valore da ricavare dall'oggetto
       var context = {
@@ -75,7 +103,7 @@ $(document).ready(function () {
         vote: vote(currentObj.vote_average),
         cover: coverUrl(currentObj.poster_path),
         overview: truncate(currentObj.overview),
-        actors: actors(currentObj.id),
+        genre: genre(currentObj.genre_ids, listType, movieGenresList, tvGenresList),
         idmovie: currentObj.id
       };
 
@@ -83,37 +111,70 @@ $(document).ready(function () {
 
       //stampo il film/serie tv dell'iterazione attuale
       var html = template(context);
-      $(".movie__box").append(html)
+      $(".movie__box").append(html);
+
 
 
       //rimuovi titolo originale se uguale al titolo
       if (currentObj[title] === currentObj[originalName]) {
         $('.originale:contains(' + currentObj[originalName] + ')').remove();
-      }
-
-
-
+      };
     };
+
+
+
   };
 
-
-  function actors(idMovie) {
-
+  //funzione che interroga l'api per ricevere la lista attori
+  function actors(idObject, urlActors) {
     $.ajax({
       type: "get",
-      url: "https://api.themoviedb.org/3/movie/" + idMovie + "/credits",
+      url: urlActors + idObject + "/credits",
       data: {
         api_key: apyKey,
       },
       success: function (data) {
-
         for (var i = 0; i < 5; i++) {
-          $("#" + idMovie).find('.attori').append(data.cast[i].name + " ")
-        }
-
+          if (data.cast[i]) {
+            $("#" + idObject).find('.actors').append(data.cast[i].name + " ")
+          };
+        };
       }
     });
-  }
+  };
+
+
+  function genre(currentGenreIds, listType, movieGenresList, tvGenresList) {
+    //console.log(movieGenresList.genres[1]);
+    console.log(currentGenreIds);
+    //console.log(listType);
+    if (listType === "movies") {
+      var generiFilm = " ";
+      //se l'id del film corrente include l'id della lista dei film
+
+      for (let i = 0; i < movieGenresList.genres.length; i++) {
+        if (currentGenreIds.includes(movieGenresList.genres[i].id)) {
+
+          console.log(movieGenresList.genres[i].id);
+
+          //console.log(currentGenre, movieGenresList.genres[i].name);
+          //console.log('movie')
+          generiFilm += movieGenresList.genres[i].name
+
+          return generiFilm
+        }
+      }
+    } else {
+      for (var i = 0; i < tvGenresList.genres.length; i++) {
+        if (currentGenreIds.includes(tvGenresList.genres[i].id)) {
+          //console.log(currentGenre, tvGenresList.genres[i].name);
+          //console.log('tv')
+          return tvGenresList.genres[i].name
+        };
+      };
+    };
+
+  };
 
 
   // Funzione gestione lingua che riceve il codice lingua dalla chiamata della funzione 
@@ -148,8 +209,8 @@ $(document).ready(function () {
     };
     //ritorna totale stelle
     return totStar;
-
   };
+
 
   //funzione che compone l'url del poster
   function coverUrl(posterPath) {
@@ -164,7 +225,7 @@ $(document).ready(function () {
   //funzione che tronca il testo della "overview"
   function truncate(input) {
     if (input.length > 200)
-      return input.substring(0, 200) + '...]';
+      return input.substring(0, 200) + '...';
     else
       return input;
   };
