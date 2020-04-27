@@ -4,15 +4,13 @@ $(document).ready(function () {
   var source = $("#movie-template").html();
   //compilo template handlebars
   var template = Handlebars.compile(source);
-  var movieList, tvList;
-  var url = "https://api.themoviedb.org/3/search/movie"
   //salvo stringa campo input
   var apyKey = "5fad9047b6dddb7c700edc20ddb983a9"
 
 
 
 
-  $("button").click(movieSearch);
+  $(".cerca").click(movieSearch);
 
 
   $("input").keypress(function (e) {
@@ -22,21 +20,28 @@ $(document).ready(function () {
   });
 
 
-
-  var movieGenresList = loadGenres("https://api.themoviedb.org/3/genre/movie/list", apyKey, "movie");
-  var tvGenresList = loadGenres("https://api.themoviedb.org/3/genre/tv/list", apyKey, "tv");
-
-  //FUNZIONI
+  //chiamata alla funzione che popola l'array di generi per movie / tv
+  loadGenres("https://api.themoviedb.org/3/genre/movie/list", apyKey, "movie");
+  loadGenres("https://api.themoviedb.org/3/genre/tv/list", apyKey, "tv");
 
 
+
+
+
+
+  //FUNZIONI************************************************************
+
+
+  //pulisce il div delle card e chiama le api 
   function movieSearch() {
     $(".movie__box").html("");
-    var query = $("input").val();
-    apiCall("https://api.themoviedb.org/3/search/movie", apyKey, query, "movies");
-    apiCall("https://api.themoviedb.org/3/search/tv", apyKey, query, "tv");
+    var query = $("input").val(); //valore campo input passato alle api
+    apiSearchCall("https://api.themoviedb.org/3/search/movie", apyKey, query, "movies");
+    apiSearchCall("https://api.themoviedb.org/3/search/tv", apyKey, query, "tv");
   }
 
 
+  //chiamata all'api e salvataggio generi
   function loadGenres(urlGenre, apyKey, type) {
     $.ajax({
       type: "get",
@@ -46,17 +51,19 @@ $(document).ready(function () {
       },
       success: function (data) {
         genere = data;
+        //popola e ritorna rispettivamente due array diversi per tipo ricevuto diverso
         if (type === "movie") {
           return movieGenresList = genere;
         } else {
           return tvGenresList = genere;
-        }
+        };
       }
     });
   };
 
 
-  function apiCall(url, apiKey, query, listType) {
+  //chiamata di ricerca movie/tv
+  function apiSearchCall(url, apiKey, query, listType) {
     $.ajax({
       url: url,
       method: "GET",
@@ -65,7 +72,8 @@ $(document).ready(function () {
         query: query // query ricercata come output da mandare all'api
       },
       success: function (data) {
-        objList = data.results; // array ottenuto dalla chiamata all'api
+        objList = data.results; // array con lista oggetti ottenuto dalla chiamata all'api
+        //chiamata funzione per stampa a video risultati
         appendObj(objList, listType)
       },
       error: function (error) {
@@ -75,13 +83,12 @@ $(document).ready(function () {
   };
 
 
-
   // funzione che riceve rispettivamente lista oggetti di film e serie tv dalle due chiamate api
   function appendObj(objList, listType) {
     for (var i = 0; i < objList.length; i++) {
-
       var title, originalName;
-      currentObj = objList[i];
+      currentObj = objList[i]; //riferimento oggetto dell'iterazione corrente
+
       // adegua i nomi dei valori delle chiavi a seconda se viene ricevuta una lista di "movie" o di "tv"
       if (listType === "movies") {
         title = "title";
@@ -93,6 +100,7 @@ $(document).ready(function () {
         urlActors = "https://api.themoviedb.org/3/tv/"
       };
 
+      //chiama funzione per lista attori
       actors(currentObj.id, urlActors)
 
       //lista di chiave-valore da ricavare dall'oggetto
@@ -107,12 +115,9 @@ $(document).ready(function () {
         idmovie: currentObj.id
       };
 
-
-
       //stampo il film/serie tv dell'iterazione attuale
       var html = template(context);
       $(".movie__box").append(html);
-
 
 
       //rimuovi titolo originale se uguale al titolo
@@ -120,10 +125,8 @@ $(document).ready(function () {
         $('.originale:contains(' + currentObj[originalName] + ')').remove();
       };
     };
-
-
-
   };
+
 
   //funzione che interroga l'api per ricevere la lista attori
   function actors(idObject, urlActors) {
@@ -134,7 +137,7 @@ $(document).ready(function () {
         api_key: apyKey,
       },
       success: function (data) {
-        for (var i = 0; i < 5; i++) {
+        for (var i = 0; i < 5; i++) { //se data cast non è null aggiungi i primi cinque attori del film corrispondente all'id ricevuto
           if (data.cast[i]) {
             $("#" + idObject).find('.actors').append(data.cast[i].name + " ")
           };
@@ -144,36 +147,21 @@ $(document).ready(function () {
   };
 
 
+  //funziona che ritorna il nome del genere quando l'id genere del film corrente è presente nella lista dei generi
   function genre(currentGenreIds, listType, movieGenresList, tvGenresList) {
-    //console.log(movieGenresList.genres[1]);
-    console.log(currentGenreIds);
-    //console.log(listType);
     if (listType === "movies") {
-      var generiFilm = " ";
-      //se l'id del film corrente include l'id della lista dei film
-
       for (let i = 0; i < movieGenresList.genres.length; i++) {
         if (currentGenreIds.includes(movieGenresList.genres[i].id)) {
-
-          console.log(movieGenresList.genres[i].id);
-
-          //console.log(currentGenre, movieGenresList.genres[i].name);
-          //console.log('movie')
-          generiFilm += movieGenresList.genres[i].name
-
-          return generiFilm
-        }
-      }
+          return movieGenresList.genres[i].name
+        };
+      };
     } else {
       for (var i = 0; i < tvGenresList.genres.length; i++) {
         if (currentGenreIds.includes(tvGenresList.genres[i].id)) {
-          //console.log(currentGenre, tvGenresList.genres[i].name);
-          //console.log('tv')
           return tvGenresList.genres[i].name
         };
       };
     };
-
   };
 
 
@@ -183,7 +171,7 @@ $(document).ready(function () {
     var flagsList = [
       'en',
       'it'
-    ]
+    ];
     //se la lista delle lingue disponibili include il codice lingua ricevuto dalla chiamata, ritorna stringa html con lingua parametrizzata nella stringa html
     if (flagsList.includes(lang)) {
       return "<img class='language' src='img/" + lang + ".png'";
@@ -219,7 +207,7 @@ $(document).ready(function () {
       return fullUrl;
     }
     return '<img src="img/no_poster.png" alt="">';
-  }
+  };
 
 
   //funzione che tronca il testo della "overview"

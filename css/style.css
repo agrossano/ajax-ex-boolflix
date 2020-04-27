@@ -1,7 +1,6 @@
 * {
   padding: 0;
   margin: 0;
-
   box-sizing: border-box;
 }
 
@@ -102,7 +101,6 @@ input {
 
 .cover:hover {
   opacity: 0.07;
-  z-index: 1;
 }
 
 .cover img {
@@ -123,6 +121,10 @@ input {
   padding-left: 18px;
   padding-right: 18px;
   z-index: 0;
+}
+
+h3 {
+  padding-top: 4px;
 }
 
 .titolo {
